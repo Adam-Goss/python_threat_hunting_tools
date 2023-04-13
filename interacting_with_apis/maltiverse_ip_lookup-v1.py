@@ -1,20 +1,38 @@
-import json
+import ipaddress
 from maltiverse import Maltiverse
 
-# api = Maltiverse(auth_token="...")
+# instantiate object to interact with Maltiverse API
 api = Maltiverse()
+# api = Maltiverse(auth_token="...")
 
 while True:
+    # get user input 
     ip = input("Please enter IP to search for (or type exit to quit): ")
-    ip_clean = str(ip).strip()
+    # clean user input
+    clean_ip = ip.strip()
 
-    if ip_clean == "quit":
+    # check if the user wants to exit 
+    if clean_ip == "quit":
         print("Goodbye.")
         break
+    
+    # validate the IP address
+    try: 
+        ipaddress.ip_address(clean_ip)
+    except ValueError:
+        print(f" - {clean_ip} is not a valid IP address. Please try again...\n")
+        continue
 
-    result = api.ip_get(ip)
+    # query Maltiverse API for data about the result
+    result = api.ip_get(clean_ip)
 
-    print(f"The IP address {ip_clean} has been identified as {result['classification']} by Malitverse")
+    # check if the 'classficiation' key is present 
+    try:
+        # print the 'classficiation' of the IP address
+        print(f"\n=> The IP address {clean_ip} has been identified as {result['classification']} by Malitverse\n")
+    except KeyError:
+        # no classficiation avaliable from Maltiverse
+        print(f"\n - The IP address {clean_ip} cannot classified by Malitverse\n")
 
 
 
