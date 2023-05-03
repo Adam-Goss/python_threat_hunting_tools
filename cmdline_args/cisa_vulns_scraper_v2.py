@@ -1,9 +1,8 @@
 # import necessary Python modules
 import requests, csv
 from bs4 import BeautifulSoup
-import argparse
+import argparse, json
 
-import sys
 
 # command line argument parser 
 parser = argparse.ArgumentParser()
@@ -13,15 +12,13 @@ parser.add_argument('--txt', action='store_true', help='output in text format')
 args = parser.parse_args()
 
 
-# print(args.json)
-# print(args.txt)
+
+# file header row for CSV and TXT output
+HEADER_ROW= ["Product", "Vendor", "Description", "Published", "CVSS", "CVE", "Reference"]
 
 
 # output functions
 def output_csv(vulns):
-    # CSV file header row
-    header_row = ["Product", "Vendor", "Description", "Published", "CVSS", "CVE", "Reference"]
-
     # edit filename to be a CSV
     csv_file = FILENAME + ".csv"
     # create a CSV file
@@ -29,7 +26,7 @@ def output_csv(vulns):
         # create csv writer to write data to file
         writer = csv.writer(f)
         # write header row
-        writer.writerow(header_row)
+        writer.writerow(HEADER_ROW)
         # write vulnerabilities
         for vuln in vulns:
             data_row = [vuln['product'], vuln['vendor'], vuln['description'], vuln['published'],vuln['cvss'], vuln["cve"], vuln['reference']]
@@ -37,11 +34,28 @@ def output_csv(vulns):
 
 
 def output_json(vulns):
-    pass
+    # edit filename to be a JSON
+    json_file = FILENAME + ".json"
+    # create a CSV file
+    with open(json_file, "w", encoding='UTF8') as f:
+        # write the data to the file in JSON format
+        json.dump(vulns, f, indent=2)
+
 
 def output_txt(vulns):
-    pass
-
+    # edit filename to be a TXT
+    txt_file = FILENAME + ".txt"
+    # create a CSV file
+    with open(txt_file, "w", encoding='UTF8') as f:
+        # write header row
+        f.write(" |\t".join(HEADER_ROW) + "\n")
+        f.write("-" * 80 + "\n")
+        # write the data to the file in JSON format
+        for vuln in vulns:
+            data = vuln['product'] + " | " + vuln['vendor'] + " | " + vuln['description'] + " | " + vuln['published'] + " | " + vuln['cvss'] + " | " + vuln['cve'] + " | " + vuln['reference']
+            # print(data)
+            f.write(data + "\n\n")
+                    
 
 
 # download the page 
@@ -93,6 +107,7 @@ for row in rows:
 
 
 
+# decide on output format 
 if args.csv:
     output_csv(vulns)
 elif args.json:
@@ -103,8 +118,6 @@ else:
     print(vulns)
 
 
-
-
-
+# print message to terminal indicating success
 print(f"Printed {PAGE_TITLE}")
 print(f"-> see {FILENAME}")
