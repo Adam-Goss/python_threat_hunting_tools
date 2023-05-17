@@ -32,7 +32,7 @@ while True:
         print(f"\n=> The IP address {clean_ip} has been identified as {result['classification']} by Malitverse\n")
     except KeyError:
         # no classficiation avaliable from Maltiverse
-        print(f"\n - The IP address {clean_ip} cannot classified by Malitverse\n")
+        print(f"\n - The IP address {clean_ip} cannot be classified by Malitverse\n")
 
 
 
