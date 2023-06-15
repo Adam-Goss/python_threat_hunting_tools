@@ -12,7 +12,7 @@ while True:
     clean_ip = ip.strip()
     
     # check if the user wants to exit 
-    if clean_ip == "quit":
+    if clean_ip == "exit":
         print("Goodbye.")
         break
     

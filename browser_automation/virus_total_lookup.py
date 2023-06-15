@@ -19,7 +19,6 @@ def load_iocs(filename):
     return iocs
 
 
-
 # runs IOC list through virus total lookups
 def run(iocs):
     # creater web driver to run virus total lookups
