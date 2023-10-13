@@ -22,7 +22,6 @@ def GetMispAttributes(misp_url, misp_key, misp_verifycert):
     misp = PyMISP(misp_url, misp_key, misp_verifycert, debug=False)
 
     # get all IOCs with IDS flag set to true and publixhed in last 89 days
-    #attributes = misp.search(controller='attributes', to_ids=1, pythonify=True)
     attributes = misp.search(controller='attributes', to_ids=1, pythonify=True, publish_timestamp='89d')
 
     # add IOCs to bucket
@@ -127,11 +126,6 @@ def GetMispAttributes(misp_url, misp_key, misp_verifycert):
     }
     return cs_indicators
 
-def GetThreatFoxIOCs():
-    # TODO - https://threatfox.abuse.ch/api/#recent-iocs
-    # TODO: rethink - is there a way to verify these IOCs?
-    pass
-
 
 def UploadIOCs(iocs_to_upload):
     # authenticate to CrowdStrike Falcon
@@ -148,7 +142,6 @@ def UploadIOCs(iocs_to_upload):
     ioc_platforms = ["Mac", "Windows", "Linux"]
     # UTC formatted date string (current date + 90 days)
     now = datetime.now() + timedelta(days=90)
-    #ioc_expiry_date = now.replace(tzinfo=timezone.utc).isoformat()
     ioc_expiry_date = now.isoformat() + "Z"
     uploaded_iocs = []
     failed_iocs = []
@@ -161,7 +154,6 @@ def UploadIOCs(iocs_to_upload):
                                retrodetects=True, description="IOC from MISP Database", expiration=ioc_expiry_date)
 
             if (response['status_code'] == 201):
-                #print("[Success] - IOC ID: " + response['body']['resources'][0]['id'])
                 uploaded_iocs.append(ioc)
             elif (response['status_code'] == 400):
                 try: 
@@ -189,9 +181,6 @@ if __name__ == "__main__":
     indicators = GetMispAttributes(MISP_URL, MISP_KEY, MISP_VERIFYCERT)
 
     # --- Step 2: Get the most recent indicators from Threat Fox --- #
-    # TODO: rethink - is there a way to verify these IOCs?
-    # threatFoxIndicators = GetThreatFoxIOCs()
-    # indicators_list.append(threatFoxIndicators) 
 
     # --- Step 3:  Use the CrowdStrike API to upload these IOCs as indicators to CrowdStrike --- #
     UploadIOCs(indicators)
