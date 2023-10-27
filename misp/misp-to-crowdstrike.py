@@ -3,7 +3,6 @@ from pymisp import PyMISP
 from pprint import pprint
 from validators import ip_address
 from datetime import datetime, timedelta
-
 from config import config
 
 
@@ -21,7 +20,7 @@ def GetMispAttributes(misp_url, misp_key, misp_verifycert):
     # authenticate to misp 
     misp = PyMISP(misp_url, misp_key, misp_verifycert, debug=False)
 
-    # get all IOCs with IDS flag set to true and publixhed in last 89 days
+    # get all IOCs with IDS flag set to true and published in last 89 days
     attributes = misp.search(controller='attributes', to_ids=1, pythonify=True, publish_timestamp='89d')
 
     # add IOCs to bucket
@@ -167,7 +166,7 @@ def UploadIOCs(iocs_to_upload):
     pprint(f"[+] failed to upladed {len(failed_iocs)} to CrowdStrike Falcon IOC Management (duplicates)")
 
 
-    # check new CrowdStrike indiator count
+    # check new CrowdStrike indicator count
     response2 = falcon.indicator_combined()
     total_iocs = response2['body']['meta']['pagination']['total']
     pprint(f"[+] There are now {total_iocs} CrowdStrike indicators.")
@@ -180,9 +179,7 @@ if __name__ == "__main__":
     # --- Step 1: Exports all attributes from MISP --- #
     indicators = GetMispAttributes(MISP_URL, MISP_KEY, MISP_VERIFYCERT)
 
-    # --- Step 2: Get the most recent indicators from Threat Fox --- #
-
-    # --- Step 3:  Use the CrowdStrike API to upload these IOCs as indicators to CrowdStrike --- #
+    # --- Step 2:  Use the CrowdStrike API to upload these IOCs as indicators to CrowdStrike --- #
     UploadIOCs(indicators)
 
 
