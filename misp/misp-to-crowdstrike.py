@@ -5,8 +5,6 @@ from validators import ip_address
 from datetime import datetime, timedelta
 from config import config
 
-
-
 # MISP authentication vars
 MISP_URL = config.MISP_URL
 MISP_KEY = config.MISP_KEY
